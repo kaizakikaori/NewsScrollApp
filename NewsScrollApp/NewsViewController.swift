@@ -9,8 +9,16 @@
 import UIKit
 import XLPagerTabStrip
 import WebKit
+import NVActivityIndicatorView
 
 class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDataSource, UITableViewDelegate, WKNavigationDelegate, XMLParserDelegate{
+   
+    @IBOutlet var EnView: NVActivityIndicatorView!
+    
+    //インディゲーターを定義
+    var indicator: NVActivityIndicatorView!
+    //ロード中
+    private var grayOutView = UIView()
 
     // 引っ張って更新
     var refreshControl: UIRefreshControl!
@@ -46,6 +54,8 @@ class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDa
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+       
         // refreshControlのインスタンス
         refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
@@ -62,7 +72,8 @@ class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDa
 
         // tableviewをviewに追加
         self.view.addSubview(tableView)
-
+        
+        
         // refreshControlをテーブルビューにつける
         tableView.addSubview(refreshControl)
 
@@ -71,6 +82,17 @@ class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDa
         toolBar.isHidden = true
 
         parseUrl()
+        
+        EnView = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 66, height: 60),type: .audioEqualizer,color: UIColor.white,padding: 0)
+    
+        EnView.center = CGPoint(x: self.view.center.x, y: self.view.center.y - 50)
+        self.view.addSubview(EnView)
+        
+        grayOutView = UIView(frame: self.view.bounds)
+        
+        grayOutView.backgroundColor = UIColor.black
+        
+        grayOutView.alpha = 0.4
     }
 
     @objc func refresh() {
@@ -182,6 +204,11 @@ class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDa
             return
         }
         let urlRequest = NSURLRequest(url: url)
+        
+        EnView.startAnimating()
+        
+        self.view.addSubview(grayOutView)
+        
         // ここでロード
         webView.load(urlRequest as URLRequest)
     }
@@ -194,6 +221,10 @@ class NewsViewController: UIViewController, IndicatorInfoProvider, UITableViewDa
         toolBar.isHidden = false
         // webviewを表示する
         webView.isHidden = false
+        
+        EnView.stopAnimating()
+        
+        grayOutView.removeFromSuperview()
     }
 
     // キャンセル

@@ -127,6 +127,7 @@
                         <viewLayoutGuide key="safeArea" id="xs5-dc-uU0"/>
                     </view>
                     <connections>
+                        <outlet property="EnView" destination="GrS-aT-Bm7" id="nDe-6l-j78"/>
                         <outlet property="toolBar" destination="Hh6-af-Cjf" id="AQb-sB-erb"/>
                         <outlet property="webView" destination="1Oo-b6-91a" id="k6V-0e-cH5"/>
                     </connections>
